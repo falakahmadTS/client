@@ -6,7 +6,7 @@ export const Partners = () => {
         { name: "Polygon", slug: "polygon", color: "hover:text-[#8247E5]" },
         { name: "Chainlink", slug: "chainlink", color: "hover:text-[#2A5ADA]" },
         { name: "Solana", slug: "solana", color: "hover:text-[#14F195]" },
-        { name: "Aave", slug: "aave", color: "hover:text-[#B6509E]" }
+        { name: "Bitcoin", slug: "bitcoin", color: "hover:text-[#F6851B]" }
     ]
 
     return (
@@ -24,7 +24,7 @@ export const Partners = () => {
                     <div key={i} className="flex items-center space-x-6 opacity-20 hover:opacity-100 transition-all duration-500 group">
                         <div className="relative group-hover:scale-110 transition-transform">
                             <img 
-                                src={`https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/${partner.slug}.svg`}
+                                src={`https://cdn.simpleicons.org/${partner.slug}`}
                                 alt={partner.name}
                                 className={`w-10 h-10 invert transition-all duration-300 group-hover:invert-0 brightness-200 group-hover:filter-none`}
                                 style={{
