@@ -1,8 +1,43 @@
-import { Link } from "react-router-dom"
+import { useState, useEffect } from "react"
+import { Link, useNavigate } from "react-router-dom"
 import { Input } from "../../components/ui/Input"
 import { Button } from "../../components/ui/Button"
+import { useAuth } from "../../context/AuthContext"
+import { toast } from "react-hot-toast"
 
 export const Login = () => {
+    const [email, setEmail] = useState("")
+    const [password, setPassword] = useState("")
+    const [loading, setLoading] = useState(false)
+
+    const { login, user } = useAuth()
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        if (user) {
+            navigate("/")
+        }
+    }, [user, navigate])
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault()
+        
+        if (!email || !password) {
+            return toast.error("Please fill in all fields")
+        }
+
+        try {
+            setLoading(true)
+            await login({ email, password })
+            toast.success("Welcome back!")
+            navigate("/")
+        } catch (error: any) {
+            toast.error(error.response?.data?.message || "Login failed")
+        } finally {
+            setLoading(false)
+        }
+    }
+
     return (
         <div className="bg-[#050505] min-h-screen text-white flex items-center justify-center p-4 relative overflow-hidden">
              {/* Background Glow */}
@@ -14,12 +49,14 @@ export const Login = () => {
                     <p className="text-gray-400">Sign in to your Tycoonz account</p>
                 </div>
 
-                <form className="space-y-6">
+                <form className="space-y-6" onSubmit={handleSubmit}>
                     <Input 
                         id="email"
                         label="Email Address"
                         type="email"
                         placeholder="you@example.com"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
                     />
                     <div>
                         <div className="flex justify-between items-center mb-2">
@@ -30,9 +67,11 @@ export const Login = () => {
                             id="password"
                             type="password"
                             placeholder="••••••••"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
                         />
                     </div>
-                    <Button type="submit" className="w-full">
+                    <Button type="submit" className="w-full" isLoading={loading}>
                         Sign In
                     </Button>
                 </form>

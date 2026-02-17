@@ -1,5 +1,5 @@
 import './App.css'
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { Home } from './pages/Home'
 import { About } from './pages/About'
@@ -10,10 +10,11 @@ import { Login } from './pages/Auth/Login'
 import { Register } from './pages/Auth/Register'
 import { NotFound } from './pages/NotFound'
 import { Loader } from './components/ui/Loader'
+import { AuthProvider } from './context/AuthContext'
+import { Toaster } from 'react-hot-toast'
 
 function AppContent() {
   const [isLoading, setIsLoading] = useState(true)
-  const location = useLocation()
 
   useEffect(() => {
     // Simulate initial loading
@@ -49,7 +50,10 @@ function AppContent() {
 function App() {
   return (
     <Router>
-      <AppContent />
+      <AuthProvider>
+        <Toaster position="top-right" />
+        <AppContent />
+      </AuthProvider>
     </Router>
   )
 }

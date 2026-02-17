@@ -1,8 +1,44 @@
-import { Link } from "react-router-dom"
+import { useState, useEffect } from "react"
+import { Link, useNavigate } from "react-router-dom"
 import { Input } from "../../components/ui/Input"
 import { Button } from "../../components/ui/Button"
+import { useAuth } from "../../context/AuthContext"
+import { toast } from "react-hot-toast"
 
 export const Register = () => {
+    const [name, setName] = useState("")
+    const [email, setEmail] = useState("")
+    const [password, setPassword] = useState("")
+    const [loading, setLoading] = useState(false)
+
+    const { register, user } = useAuth()
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        if (user) {
+            navigate("/")
+        }
+    }, [user, navigate])
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault()
+        
+        if (!name || !email || !password) {
+            return toast.error("Please fill in all fields")
+        }
+
+        try {
+            setLoading(true)
+            await register({ name, email, password })
+            toast.success("Welcome to Tycoonz!")
+            navigate("/")
+        } catch (error: any) {
+            toast.error(error.response?.data?.message || "Registration failed")
+        } finally {
+            setLoading(false)
+        }
+    }
+
     return (
         <div className="bg-[#050505] min-h-screen text-white flex items-center justify-center p-4 relative overflow-hidden">
             {/* Background Glow */}
@@ -14,24 +50,16 @@ export const Register = () => {
                     <p className="text-gray-400">Join Tycoonz and start building today</p>
                 </div>
 
-                <form className="space-y-6">
-                    <div className="grid grid-cols-2 gap-4">
-                         <div>
-                            <Input 
-                                id="firstName"
-                                label="First Name"
-                                type="text"
-                                placeholder="John"
-                            />
-                        </div>
-                        <div>
-                            <Input 
-                                id="lastName"
-                                label="Last Name"
-                                type="text"
-                                placeholder="Doe"
-                            />
-                        </div>
+                <form className="space-y-6" onSubmit={handleSubmit}>
+                    <div>
+                        <Input 
+                            id="name"
+                            label="Full Name"
+                            type="text"
+                            placeholder="John Doe"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                        />
                     </div>
                     <div>
                         <Input 
@@ -39,6 +67,8 @@ export const Register = () => {
                             label="Email Address"
                             type="email"
                             placeholder="you@example.com"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                         />
                     </div>
                     <div>
@@ -47,9 +77,11 @@ export const Register = () => {
                             label="Password"
                             type="password"
                             placeholder="••••••••"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
                         />
                     </div>
-                    <Button type="submit" className="w-full">
+                    <Button type="submit" className="w-full" isLoading={loading}>
                         Create Account
                     </Button>
                 </form>
