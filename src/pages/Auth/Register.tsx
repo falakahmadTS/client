@@ -29,8 +29,8 @@ export const Register = () => {
 
         try {
             setLoading(true)
-            await register({ name, email, password })
-            toast.success("Welcome to Tycoonz!")
+            const userData = await register({ name, email, password })
+            toast.success(`Welcome to Tycoonz, ${userData.name}!`)
             navigate("/")
         } catch (error: any) {
             toast.error(error.response?.data?.message || "Registration failed")

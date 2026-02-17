@@ -28,8 +28,8 @@ export const Login = () => {
 
         try {
             setLoading(true)
-            await login({ email, password })
-            toast.success("Welcome back!")
+            const userData = await login({ email, password })
+            toast.success(`Welcome back! ${userData.name}`)
             navigate("/")
         } catch (error: any) {
             toast.error(error.response?.data?.message || "Login failed")

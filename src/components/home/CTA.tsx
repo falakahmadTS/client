@@ -1,6 +1,9 @@
 import { ArrowRight } from "lucide-react"
+import { Link } from "react-router-dom"
+import { useAuth } from "../../context/AuthContext"
 
 export const CTA = () => {
+    const { user } = useAuth()
     return (
         <section className="py-32 px-4 bg-[#0a0a0a] relative overflow-hidden">
             {/* Background Gradient/Glow */}
@@ -15,13 +18,13 @@ export const CTA = () => {
                     Join the fastest growing layer-1 ecosystem and build decentralized applications without limits.
                 </p>
                 <div className="flex flex-col sm:flex-row justify-center gap-4">
-                    <button className="px-8 py-4 bg-white text-black font-bold rounded-lg hover:bg-gray-200 transition-colors flex items-center justify-center gap-2 group">
-                        Start Building
+                    <Link to={user ? "/dashboard" : "/register"} className="px-8 py-4 bg-white text-black font-bold rounded-lg hover:bg-gray-200 transition-colors flex items-center justify-center gap-2 group">
+                        {user ? "Go to Dashboard" : "Start Building"}
                         <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                    </button>
-                    <button className="px-8 py-4 bg-transparent border border-gray-700 text-white font-medium rounded-lg hover:bg-white/5 transition-colors">
+                    </Link>
+                    <Link to="/contact" className="px-8 py-4 bg-transparent border border-gray-700 text-white font-medium rounded-lg hover:bg-white/5 transition-colors">
                         Contact Sales
-                    </button>
+                    </Link>
                 </div>
             </div>
         </section>

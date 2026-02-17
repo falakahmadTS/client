@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router-dom"
+import { Link } from "react-router-dom"
 import { Menu, X, User as UserIcon, LogOut } from "lucide-react"
 import { useState, useEffect } from "react"
 import { useAuth } from "../../context/AuthContext"
@@ -6,7 +6,6 @@ import { useAuth } from "../../context/AuthContext"
 export const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false)
     const [scrolled, setScrolled] = useState(false)
-    const location = useLocation()
     const { user, logout } = useAuth()
     
     const toggleMenu = () => setIsOpen(!isOpen)
