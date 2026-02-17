@@ -44,12 +44,12 @@ export const Navbar = () => {
                             
                             {user ? (
                                 <div className="flex items-center space-x-4 ml-4 pl-4 border-l border-white/10">
-                                    <div className="flex items-center space-x-2">
-                                        <div className="w-8 h-8 rounded-full bg-[#ff5c5c]/20 flex items-center justify-center border border-[#ff5c5c]/30">
+                                    <Link to="/dashboard" className="flex items-center space-x-2 group">
+                                        <div className="w-8 h-8 rounded-full bg-[#ff5c5c]/20 flex items-center justify-center border border-[#ff5c5c]/30 group-hover:bg-[#ff5c5c]/30 transition-all">
                                             <UserIcon className="w-4 h-4 text-[#ff5c5c]" />
                                         </div>
-                                        <span className="text-sm font-medium text-gray-200">{user.name}</span>
-                                    </div>
+                                        <span className="text-sm font-medium text-gray-200 group-hover:text-white transition-colors">{user.name}</span>
+                                    </Link>
                                     <button 
                                         onClick={logout}
                                         className="text-gray-400 hover:text-white transition-colors flex items-center space-x-1"

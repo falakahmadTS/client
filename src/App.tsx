@@ -13,8 +13,14 @@ import { Loader } from './components/ui/Loader'
 import { AuthProvider } from './context/AuthContext'
 import { Toaster } from 'react-hot-toast'
 
+import { useLocation } from 'react-router-dom'
+import { Dashboard } from './pages/Dashboard'
+import { ProtectedRoute } from './components/auth/ProtectedRoute'
+
 function AppContent() {
   const [isLoading, setIsLoading] = useState(true)
+  const location = useLocation()
+  const isDashboard = location.pathname.startsWith('/dashboard')
 
   useEffect(() => {
     // Simulate initial loading
@@ -31,7 +37,7 @@ function AppContent() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <Navbar />
+      {!isDashboard && <Navbar />}
       <main className="flex-grow">
         <Routes>
           <Route path="/" element={<Home />} />
@@ -39,10 +45,18 @@ function AppContent() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route 
+            path="/dashboard" 
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            } 
+          />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
-      <Footer />
+      {!isDashboard && <Footer />}
     </div>
   )
 }
