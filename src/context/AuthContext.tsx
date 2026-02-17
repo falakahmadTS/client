@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import api from '../utils/api';
 
+import toast from 'react-hot-toast';
+
 interface User {
     _id: string;
     name: string;
@@ -48,6 +50,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const logout = () => {
         localStorage.removeItem('userInfo');
         setUser(null);
+        toast.success('Logged out successfully');
     };
 
     return (

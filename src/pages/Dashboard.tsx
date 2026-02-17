@@ -3,6 +3,7 @@ import { LayoutDashboard, Wallet, Activity, Box, TrendingUp, LogOut, Menu, X } f
 import { useAuth } from '../context/AuthContext';
 import api from '../utils/api';
 import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
+import { Link } from 'react-router-dom';
 
 export const Dashboard = () => {
     const { user, logout } = useAuth();
@@ -35,8 +36,8 @@ export const Dashboard = () => {
             <aside className={`fixed lg:static inset-y-0 left-0 z-50 w-64 bg-[#0a0a0a] border-r border-white/5 transition-transform duration-300 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>
                 <div className="h-full flex flex-col p-6">
                     <div className="flex items-center gap-3 mb-10 px-2">
-                        <div className="w-8 h-8 bg-[#ff5c5c] rounded-lg"></div>
-                        <span className="text-xl font-bold tracking-tighter">TYCOONZ</span>
+                        <Link to="/" className="text-xl font-bold tracking-tighter">TYCOONZ <span className="text-[#ff5c5c]">.</span></Link>
+
                     </div>
 
                     <nav className="flex-grow space-y-2">
