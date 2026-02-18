@@ -17,21 +17,25 @@ import { useLocation } from 'react-router-dom'
 import { Dashboard } from './pages/Dashboard'
 import { ProtectedRoute } from './components/auth/ProtectedRoute'
 
+import { useAuth } from './context/AuthContext'
+
 function AppContent() {
-  const [isLoading, setIsLoading] = useState(true)
+  const { loading: authLoading } = useAuth()
+  const [showMainContent, setShowMainContent] = useState(false)
   const location = useLocation()
   const isDashboard = location.pathname.startsWith('/dashboard')
 
   useEffect(() => {
-    // Simulate initial loading
-    const timer = setTimeout(() => {
-      setIsLoading(false)
-    }, 2500)
+    // Ensure the splash screen shows for at least a short duration for aesthetics
+    if (!authLoading) {
+      const timer = setTimeout(() => {
+        setShowMainContent(true)
+      }, 500)
+      return () => clearTimeout(timer)
+    }
+  }, [authLoading])
 
-    return () => clearTimeout(timer)
-  }, [])
-
-  if (isLoading) {
+  if (!showMainContent) {
     return <Loader />
   }
 
