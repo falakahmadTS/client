@@ -2,8 +2,10 @@ import { useState, useEffect } from 'react';
 import { LayoutDashboard, Wallet, Activity, Box, TrendingUp, LogOut, Menu, X } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import api from '../utils/api';
-import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
 import { Link } from 'react-router-dom';
+import { StatsCard } from '../components/dashboard/StatsCard';
+import { ActivityChart } from '../components/dashboard/ActivityChart';
+import { StakingCard } from '../components/dashboard/StakingCard';
 
 export const Dashboard = () => {
     const { user, logout } = useAuth();
@@ -13,6 +15,9 @@ export const Dashboard = () => {
     useEffect(() => {
         const fetchStats = async () => {
             try {
+                // Simulate network delay for testing loader
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
                 const { data } = await api.get('/api/users/stats');
                 setStats(data);
             } catch (err) {
@@ -30,6 +35,8 @@ export const Dashboard = () => {
         { icon: TrendingUp, label: 'Staking', active: false },
     ];
 
+    const isLoading = !stats;
+
     return (
         <div className="min-h-screen bg-[#050505] text-white flex">
             {/* Sidebar */}
@@ -37,7 +44,6 @@ export const Dashboard = () => {
                 <div className="h-full flex flex-col p-6">
                     <div className="flex items-center gap-3 mb-10 px-2">
                         <Link to="/" className="text-xl font-bold tracking-tighter">TYCOONZ <span className="text-[#ff5c5c]">.</span></Link>
-
                     </div>
 
                     <nav className="flex-grow space-y-2">
@@ -82,95 +88,42 @@ export const Dashboard = () => {
 
                 {/* Stats Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-                    <div className="p-6 bg-white/5 rounded-3xl border border-white/10 backdrop-blur-xl group hover:border-[#ff5c5c]/30 transition-all">
-                        <div className="flex justify-between items-start mb-4">
-                            <div className="p-3 bg-[#ff5c5c]/10 rounded-2xl">
-                                <Wallet className="w-6 h-6 text-[#ff5c5c]" />
-                            </div>
-                            <span className="text-xs font-bold text-green-400 bg-green-400/10 px-2 py-1 rounded-full">+12.5%</span>
-                        </div>
-                        <p className="text-gray-400 text-sm mb-1">Total Balance</p>
-                        <h2 className="text-3xl font-bold">{stats?.balance.toLocaleString()} <span className="text-gray-500 text-lg uppercase">tyc</span></h2>
-                    </div>
-
-                    <div className="p-6 bg-white/5 rounded-3xl border border-white/10 backdrop-blur-xl group hover:border-[#ff5c5c]/30 transition-all">
-                        <div className="flex justify-between items-start mb-4">
-                            <div className="p-3 bg-blue-500/10 rounded-2xl">
-                                <Box className="w-6 h-6 text-blue-500" />
-                            </div>
-                            <span className="text-xs font-bold text-blue-400 bg-blue-400/10 px-2 py-1 rounded-full">Active</span>
-                        </div>
-                        <p className="text-gray-400 text-sm mb-1">Validation Nodes</p>
-                        <h2 className="text-3xl font-bold">{stats?.nodesActive} <span className="text-gray-500 text-lg">Online</span></h2>
-                    </div>
-
-                    <div className="p-6 bg-white/5 rounded-3xl border border-white/10 backdrop-blur-xl group hover:border-[#ff5c5c]/30 transition-all">
-                        <div className="flex justify-between items-start mb-4">
-                            <div className="p-3 bg-purple-500/10 rounded-2xl">
-                                <TrendingUp className="w-6 h-6 text-purple-500" />
-                            </div>
-                            <span className="text-xs font-bold text-gray-400 bg-white/5 px-2 py-1 rounded-full">Total Earned</span>
-                        </div>
-                        <p className="text-gray-400 text-sm mb-1">Staking Rewards</p>
-                        <h2 className="text-3xl font-bold">{stats?.rewardsTotal.toLocaleString()} <span className="text-gray-500 text-lg">TYC</span></h2>
-                    </div>
+                    <StatsCard 
+                        title="Total Balance" 
+                        value={stats?.balance?.toLocaleString() || '0'} 
+                        subValue="TYC" 
+                        icon={Wallet} 
+                        trend="+12.5%" 
+                        trendType="positive"
+                        color="red"
+                        loading={isLoading}
+                    />
+                    <StatsCard 
+                        title="Validation Nodes" 
+                        value={stats?.nodesActive || '0'} 
+                        subValue="Online" 
+                        icon={Box} 
+                        trend="Active" 
+                        trendType="positive" // Assuming active is good/positive context
+                        color="blue"
+                        loading={isLoading}
+                    />
+                    <StatsCard 
+                        title="Staking Rewards" 
+                        value={stats?.rewardsTotal?.toLocaleString() || '0'} 
+                        subValue="TYC" 
+                        icon={TrendingUp} 
+                        trend="Total Earned"
+                        trendType="neutral"
+                        color="purple"
+                        loading={isLoading}
+                    />
                 </div>
 
                 {/* Charts Area */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div className="lg:col-span-2 p-8 bg-white/5 rounded-3xl border border-white/10 backdrop-blur-xl">
-                        <h3 className="text-lg font-bold mb-6">Network Activity</h3>
-                        <div className="h-[300px] w-full">
-                            <ResponsiveContainer width="100%" height="100%">
-                                <AreaChart data={stats?.activityData}>
-                                    <defs>
-                                        <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                                            <stop offset="5%" stopColor="#ff5c5c" stopOpacity={0.3}/>
-                                            <stop offset="95%" stopColor="#ff5c5c" stopOpacity={0}/>
-                                        </linearGradient>
-                                    </defs>
-                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
-                                    <XAxis 
-                                        dataKey="name" 
-                                        stroke="#4b5563" 
-                                        fontSize={12} 
-                                        tickLine={false} 
-                                        axisLine={false} 
-                                    />
-                                    <YAxis 
-                                        stroke="#4b5563" 
-                                        fontSize={12} 
-                                        tickLine={false} 
-                                        axisLine={false} 
-                                        tickFormatter={(value) => `${value}`}
-                                    />
-                                    <Tooltip 
-                                        contentStyle={{ backgroundColor: '#0a0a0a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}
-                                        itemStyle={{ color: '#ff5c5c' }}
-                                    />
-                                    <Area 
-                                        type="monotone" 
-                                        dataKey="value" 
-                                        stroke="#ff5c5c" 
-                                        strokeWidth={3}
-                                        fillOpacity={1} 
-                                        fill="url(#colorValue)" 
-                                    />
-                                </AreaChart>
-                            </ResponsiveContainer>
-                        </div>
-                    </div>
-
-                    <div className="p-8 bg-gradient-to-br from-[#ff5c5c]/20 to-[#ff5c5c]/5 rounded-3xl border border-[#ff5c5c]/20 flex flex-col justify-center items-center text-center">
-                        <div className="w-16 h-16 bg-[#ff5c5c]/20 rounded-full flex items-center justify-center mb-6 border border-[#ff5c5c]/30">
-                            <TrendingUp className="w-8 h-8 text-[#ff5c5c]" />
-                        </div>
-                        <h4 className="text-xl font-bold mb-2">Passive Rewards</h4>
-                        <p className="text-gray-400 text-sm mb-6">Your APY is currently at <span className="text-white font-bold">14.5%</span>. Stake more to increase your tier.</p>
-                        <button className="w-full py-4 bg-white text-black font-bold rounded-2xl hover:bg-gray-200 transition-all">
-                            Stake TYC Tokens
-                        </button>
-                    </div>
+                    <ActivityChart data={stats?.activityData || []} loading={isLoading} />
+                    <StakingCard loading={isLoading} />
                 </div>
             </main>
         </div>
